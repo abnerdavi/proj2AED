@@ -29,5 +29,4 @@ class loja{
   public int getQtdEstoque(int i){
     return qtdEstoque[i];
   }
-
 }
