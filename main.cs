@@ -41,7 +41,7 @@ class MainClass {
           aux3 = char.Parse(Console.ReadLine());
           if (aux3 =='n'){
             sair=true;
-            Console.WriteLine("Redirecionando para o pagamento...");
+            Console.WriteLine("Redirecionando para o menu principal...");
           }
           if(aux3!='n' && aux3!='s'){
             Console.WriteLine("Opção invalida, digite novamente!");
