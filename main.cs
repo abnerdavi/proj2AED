@@ -2,12 +2,6 @@ using System;
 
 class MainClass {
 
-  /*public static fechaCompra(){
-    for(int i=0; i < ){
-
-    }
-  }*/
-
   public static void CriaCliente(cliente cl){
     Console.WriteLine("Digite seu nome: ");
     cl.setNome(Console.ReadLine());
@@ -17,30 +11,32 @@ class MainClass {
     cl.email = Console.ReadLine();
   }
 
-  public static void EscolheProduto(carrinho car, loja getQtd){
-    int aux1, aux2;
+  public static void EscolheProduto(carrinho car, loja item){
+    int codItem, qtdItem;
     char aux3;
     bool sair=false, aux4=false;
 
-    Console.WriteLine("\n--------------------------------------------------\n");
-    while (sair==false){
-      Console.WriteLine("Digite o código do produto: ");
-        aux1 = (int.Parse(Console.ReadLine())-1);
+    Console.WriteLine("----------------------------------------------------\n");
+    while (sair == false){
+      Console.Write("Digite o código do produto: ");
+        codItem = (int.Parse(Console.ReadLine())-1);
         do{
-          Console.WriteLine("Digite a quantidade desejada: ");
-          aux2 = int.Parse(Console.ReadLine());
+          Console.Write("Digite a quantidade desejada: ");
+          qtdItem = int.Parse(Console.ReadLine());
 
-          if(aux2 > getQtd.getQtdEstoque(aux1)){
+          if(qtdItem > item.getQtdEstoque(codItem)){
             Console.WriteLine("Quantidade acima da disponível!");
             aux4=true;
-          }else if(aux2 <= getQtd.getQtdEstoque(aux1)){
+          }else if(qtdItem <= item.getQtdEstoque(codItem)){
+            item.subtraiEstoque(codItem,qtdItem);
             aux4=false;
           }
         }while(aux4==true);
-        car.addItem(aux1, aux2);
-    
+        if(qtdItem!=0){
+        car.addItem(codItem, qtdItem);
+        }
         do{
-          Console.WriteLine("Deseja adicionar mais um item ao seu carrinho? (s-sim ; n-não) ");
+          Console.Write("Deseja adicionar mais um item ao seu carrinho? (s-sim ; n-não) ");
           aux3 = char.Parse(Console.ReadLine());
           if (aux3 =='n'){
             sair=true;
@@ -53,32 +49,40 @@ class MainClass {
     }
   }
 
-  public static void Pagamento(){
-    int aux;
+  public static bool Pagamento(){
+    bool aux=true, pagAprov=false;
+    int opcao = 0;
     do{
-      Console.WriteLine("Escolha o metodo de pagamento: [1]-Cartão [2]-PicPay");
-      aux=int.Parse(Console.ReadLine());
+      Console.WriteLine("Escolha o metodo de pagamento:\n \t[1]-Cartão | [2]-PicPay | [3]-Voltar ao carrinho");
+      opcao=int.Parse(Console.ReadLine());
 
-      switch(aux){
+      switch(opcao){
         case 1:
-          Console.WriteLine("Metodo escolhido-> A Vista em dinheiro");
+          Console.WriteLine("Metodo escolhido -> Cartão de crédito/débito");
+          Console.ReadKey(true);
+          aux=false;
+          pagAprov = true;
           break;
         case 2:
-          Console.WriteLine("Metodo escolhido -> Cartão de crédito/débito");
+          Console.WriteLine("Metodo escolhido-> PicPay\n\tConta: @memercado\nDigite qualquer tecla para continuar...");
+          Console.ReadKey(true);
+          aux=false;
+          pagAprov = true;
           break;
         case 3:
-          Console.WriteLine("Metodo escolhido-> PicPay\n\tConta: @memercado");
-          break;
-        case 4:
-          Console.WriteLine("Cancelando pagamento, voltando ao carrinho...");
+          Console.WriteLine("Cancelando pagamento, voltando ao carrinho...\nDigite qualquer tecla para continuar.");
+          Console.ReadKey(true);
+          aux = false;
+          pagAprov = false;
           break;
         default:
-          Console.WriteLine("Opção invalida, digite novamente!");
+          Console.WriteLine("Opção invalida! Digite qualquer tecla para continuar...");
+          Console.ReadKey(true);//para esperar o usuario digitar uma tecla para continuar
           break;
       }
-
-    }while(aux!=1 & aux!=2);
-
+      Console.Clear();//limpa tela
+    }while(aux);
+  return pagAprov;
   }
 
   public static void FinalizaCompra(carrinho pedidoFinal, cliente cl){
@@ -86,11 +90,10 @@ class MainClass {
     Console.WriteLine("Cliente - {0}\nE-mail - {1}\nEndereço - {2}", cl.nome, cl.email, cl.endereco); //printa os dados do cliente.
     pedidoFinal.getNota(); //retorna produto, quatidade e valor total de cada item comprado e do carrinho.
     pedidoFinal.getValorTotal(); //retorna o valor total do carrinho.
-
+    pedidoFinal.limpaCarrinho();
   }
 
-  public static void Produtos(){
-    loja getInfos = new loja();
+  public static void Produtos(loja getInfos){
     Console.WriteLine("\n--------------------------------------------------\n");
     Console.WriteLine("> COD <| QTD | DESCRICAO : VALOR");
     for(int i=0; i<getInfos.quantItens(); i++){
@@ -99,54 +102,72 @@ class MainClass {
   }
 
   public static int menuInicial(){
-    int op=5;
+    int op=-1;
     
-    while(op != 0){
       Console.WriteLine("##########~ MENU ~##########");
       Console.WriteLine("  1 - Produtos/Vitrine");
       Console.WriteLine("  2 - Carrinho");
       Console.WriteLine("  3 - Perfil do usuário");
       Console.WriteLine("  0 - Sair");
+      Console.Write("Digite a opção desejada: ");
       op = int.Parse(Console.ReadLine()); 
-    }
+
     return op;
   } 
+
+  public static void perfilUsuario(cliente c){
+    Console.WriteLine("Cliente : {0}\nE-mail : {1}\nEndereço : {2}", c.nome, c.email, c.endereco); //printa os dados do cliente.
+  }
 
   public static void Main () {
 
     loja vitrine = new loja();
     cliente cli = new cliente();
     carrinho pedido = new carrinho();
-    
-    
+    bool opcao=true;  
+    int op=0;
+
     CriaCliente(cli);
-    Produtos(); //retorna informações dos produtos
-    EscolheProduto(pedido, vitrine); //função para adicionar o produto ao carrinho.
-    Pagamento(); //direciona para a escolha do metodo de pagamento.
-    FinalizaCompra(pedido, cli); //imprime o os produtos comprados e valor total da compra.
+    Console.Clear();
 
-    /*
-    switch(op){
-      case 1:
-      break;
+    while(opcao){
+      op = menuInicial();
+      switch(op){
+        case 1:
+          Produtos(vitrine); //retorna informações dos produtos
+          EscolheProduto(pedido, vitrine); //função para adicionar o produto ao carrinho.
+          break;
 
-      case 2:
-      break;
+        case 2:
+          pedido.getNota();
+          Console.WriteLine("Deseja fechar a compra[S/s ou N/n] ou limpar o carrinho[L/l]?\nDigite a opção desejada: ");
 
-      case 3:
-      break;
+          char decisao = char.Parse(Console.ReadLine());
+          if( decisao == 'S' || decisao == 's'){
+            if(Pagamento()){ //direciona para a escolha do metodo de pagamento.
+            FinalizaCompra(pedido, cli);//imprime o os produtos comprados e valor total da compra.
+             } 
+          }else if( decisao == 'L' || decisao=='l'){
+            pedido.limpaCarrinho();
+          }   
+          break;
 
-      case 0:
-      break;
+        case 3:
+          perfilUsuario(cli);
+          break;
 
-      default:
-      break;
-    
+        case 0:
+          Console.WriteLine("Saindo da loja...Obrigado pela preferência e volte sempre");
+          opcao = false;
+          break;
+
+        default:
+          Console.WriteLine("Opção inválida... Digite a opção novamente.");
+          break;
+      }
+      Console.WriteLine("Digite qualquer tecla para continuar...");
+      Console.ReadKey(true);
+      Console.Clear();
     }
-
-    */
-    
-
-
   }
 }
