@@ -7,13 +7,10 @@ class cliente{
   public string endereco{ get; set; }
 
   public string email{ get; set;}
-
-  //ulong cartao {get; private set; }
   
   public void setNome(string n){
     nome = n; 
   }
-
   
   public void setEndereco(string e){
     endereco = e; 
@@ -22,8 +19,4 @@ class cliente{
   public void setEmail(string e){
     email = e; 
   }
-  
-
-  
-
 }
