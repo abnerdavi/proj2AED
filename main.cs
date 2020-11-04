@@ -3,6 +3,7 @@ using System;
 class MainClass {
 
   public static void CriaCliente(cliente cl){
+    Console.WriteLine("Bem vindo(a) ao Loja Online da MEMErcado, vamos realizar seu cadastro primeiro:\n");
     Console.WriteLine("Digite seu nome: ");
     cl.setNome(Console.ReadLine());
     Console.WriteLine("Digite seu endereço: ");
